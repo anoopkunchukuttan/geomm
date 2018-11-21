@@ -1,6 +1,5 @@
-# GeoMM
+# Geometry-aware Multilingual Embedding
 
-Geometry-aware Multilingual Embeddings
 
 Code for learning multilingual embeddings using the method reported in: 
 
