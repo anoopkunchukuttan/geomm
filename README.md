@@ -25,8 +25,8 @@ Do the following steps in order:
 ## Datasets
 The datasets can be downloaded by running the following commands in vecmap_data/ and muse_data/
 		
-		./get_vecmap_data.sh
-		./get_muse_data.sh
+	./get_vecmap_data.sh
+	./get_muse_data.sh
 
 ## Reproducing Results
 
@@ -44,7 +44,7 @@ The results that have been reported in  _[Learning Multilingual Word Embeddings 
 **Note:** Since our code makes use of CUDA and FP32 precision, it may not be possible to reproduce our results exactly, due to minor numerical variations in GPU operations. However, the effect on the final results is negligible, as we have observed the variations usually lie within an error margin of 0.1 or 0.2.
 
 ## References
-Please cite _[Learning Multilingual Word Embeddings in Latent Metric Space: A Geometric Approach](https://arxiv.org/abs/1808.08773)_ if you found the resources in this repository useful
+Please cite _[Learning Multilingual Word Embeddings in Latent Metric Space: A Geometric Approach](https://arxiv.org/abs/1808.08773)_ if you found the resources in this repository useful.
 
 	@article{jawanpuria2018learning,
 	  title={Learning multilingual word embeddings in latent metric space: a geometric approach},
