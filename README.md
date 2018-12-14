@@ -37,7 +37,7 @@ The results that have been reported in  _[Learning Multilingual Word Embeddings 
 * Results of the GeoMM-Multi algorithm reported in Table 1, 2 and 6:
 	
 		./geomm_multi_results.sh
- Results of the GeoMM-Semi algorithm reported in Table 7:
+* Results of the GeoMM-Semi algorithm reported in Table 7:
 	
 		./geomm_semi_results.sh
 
