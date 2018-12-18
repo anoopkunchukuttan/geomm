@@ -8,7 +8,7 @@ Pratik Jawanpuria, Arjun Balgovind, Anoop Kunchukuttan, Bamdev Mishra. _[Learnin
 ## Environment Setup
 Do the following steps in order:
 1. Clone the repository
-2. Create a python virtual environment without Tensorflow (if TF is present PyManopt gives out of memory errors).  
+2. Create a python virtual environment without Tensorflow (if TF is present Pymanopt gives out of memory errors).  
 3. pip install numpy scipy ipdb
 4. pip install git+https://github.com/pymanopt/pymanopt.git --upgrade
 5. In Pymanopt code(located at C:\Anaconda\envs\ENVRNMT_NAME\Lib\site-packages\pymanopt\tools\autodiff for Windows or the Linux equivalent), at line 46,49,101,104 add a parameter to the call of theano.function, allow_input_downcast=True 
@@ -31,10 +31,10 @@ The datasets can be downloaded by running the following commands in vecmap_data/
 ## Reproducing Results
 
 The results that have been reported in  _[Learning Multilingual Word Embeddings in Latent Metric Space: A Geometric Approach](https://arxiv.org/abs/1808.08773)_ can be reproduced by running the following scripts:
-* Results of the GeoMM algorithm reported in Table 1, 2 and 6:
+* Results of the GeoMM algorithm reported in Table 1, 2, and 6:
 	
 		./geomm_results.sh
-* Results of the GeoMM-Multi algorithm reported in Table 1, 2 and 6:
+* Results of the GeoMM-Multi algorithm reported in Table 1, 2, and 6:
 	
 		./geomm_multi_results.sh
 * Results of the GeoMM-Semi algorithm reported in Table 7:
@@ -49,6 +49,6 @@ Please cite _[Learning Multilingual Word Embeddings in Latent Metric Space: A Ge
 	@article{jawanpuria2018learning,
 	  title={Learning multilingual word embeddings in latent metric space: a geometric approach},
 	  author={Jawanpuria, Pratik and Balgovind, Arjun and Kunchukuttan, Anoop and Mishra, Bamdev},
-	  journal={arXiv preprint arXiv:1808.08773},
+	  journal={Accepted in TACL},
 	  year={2018}
 	}
