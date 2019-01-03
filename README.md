@@ -43,6 +43,9 @@ The results that have been reported in  _[Learning Multilingual Word Embeddings 
 
 **Note:** Since our code makes use of CUDA and FP32 precision, it may not be possible to reproduce our results exactly, due to minor numerical variations in GPU operations. However, the effect on the final results is negligible, as we have observed the variations usually lie within an error margin of 0.1 or 0.2.
 
+## Acknowledgements
+The data-processing part of our code was taken from _[Artetxe's Vecmap Repository](https://github.com/artetxem/vecmap)_.
+
 ## References
 Please cite _[Learning Multilingual Word Embeddings in Latent Metric Space: A Geometric Approach](https://arxiv.org/abs/1808.08773)_ if you found the resources in this repository useful.
 
