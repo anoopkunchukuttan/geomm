@@ -66,6 +66,6 @@ Please cite _[Learning Multilingual Word Embeddings in Latent Metric Space: A Ge
 	@article{jawanpuria2018learning,
 	  title={Learning multilingual word embeddings in latent metric space: a geometric approach},
 	  author={Jawanpuria, Pratik and Balgovind, Arjun and Kunchukuttan, Anoop and Mishra, Bamdev},
-	  journal={Accepted in Transaction of the Association of Computational Linguistics (TACL)},
+	  journal={Accepted in Transaction of the Association for Computational Linguistics (TACL)},
 	  year={2019}
 	}
