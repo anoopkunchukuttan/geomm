@@ -23,6 +23,8 @@ def main():
     parser = argparse.ArgumentParser(description='Map the source embeddings into the target embedding space')
     parser.add_argument('src_input', help='the input source embeddings')
     parser.add_argument('trg_input', help='the input target embeddings')
+    parser.add_argument('--model_path', default=None, type=str, help='directory to save the model')
+    parser.add_argument('--geomm_embeddings_path', default=None, type=str, help='directory to save the output GeoMM latent space embeddings. The output embeddings are normalized.')
     parser.add_argument('--encoding', default='utf-8', help='the character encoding for input/output (defaults to utf-8)')
     parser.add_argument('--max_vocab', default=0,type=int, help='Maximum vocabulary to be loaded, 0 allows complete vocabulary')
     parser.add_argument('--verbose', default=0,type=int, help='Verbose')
@@ -170,6 +172,13 @@ def main():
     U2 = w[1]
     B = w[2]
 
+    ### Save the models if requested
+    if args.model_path is not None: 
+        os.makedirs(args.model_path,exist_ok=True)
+        np.savetxt('{}/U_src.csv'.format(args.model_path),U1)
+        np.savetxt('{}/U_tgt.csv'.format(args.model_path),U2)
+        np.savetxt('{}/B.csv'.format(args.model_path),B)
+
     # Step 2: Transformation
     xw = x.dot(U1).dot(scipy.linalg.sqrtm(B))
     zw = z.dot(U2).dot(scipy.linalg.sqrtm(B))
@@ -179,11 +188,24 @@ def main():
         print('Completed training in {0:.2f} seconds'.format(end_time-start_time))
     gc.collect()
 
+    ### Save the GeoMM embeddings if requested
+    xw_n = embeddings.length_normalize(xw)
+    zw_n = embeddings.length_normalize(zw)
+    if args.geomm_embeddings_path is not None: 
+        os.makedirs(args.geomm_embeddings_path,exist_ok=True)
+
+        out_emb_fname=os.path.join(args.geomm_embeddings_path,'src.vec')
+        with open(out_emb_fname,'w',encoding=args.encoding) as outfile:
+            embeddings.write(src_words,xw_n,outfile)
+
+        out_emb_fname=os.path.join(args.geomm_embeddings_path,'trg.vec')
+        with open(out_emb_fname,'w',encoding=args.encoding) as outfile:
+            embeddings.write(trg_words,zw_n,outfile)
 
     # Step 3: Evaluation
     if args.normalize_eval:
-        xw = embeddings.length_normalize(xw)
-        zw = embeddings.length_normalize(zw)
+        xw = xw_n
+        zw = zw_n
 
     X = xw[src_indices]
     Z = zw[trg_indices]
