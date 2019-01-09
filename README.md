@@ -43,6 +43,20 @@ The results that have been reported in  _[Learning Multilingual Word Embeddings 
 
 **Note:** Since our code makes use of CUDA and FP32 precision, it may not be possible to reproduce our results exactly, due to minor numerical variations in GPU operations. However, the effect on the final results is negligible, as we have observed the variations usually lie within an error margin of 0.1 or 0.2.
 
+## GeoMM Embeddings 
+
+**Coming soon**
+
+We provide GeoMM bilingual and multilingual embeddings for monolingual embeddings in the FastText repository.
+
+### Using CommonCrawl FastText Embeddings
+
+#### English to Indian language bilingual embeddings
+
+### Using Wikipedia FastText Embeddings
+
+
+
 ## Acknowledgements
 The data-processing part of our code was taken from _[Artetxe's Vecmap Repository](https://github.com/artetxem/vecmap)_.
 
@@ -52,6 +66,6 @@ Please cite _[Learning Multilingual Word Embeddings in Latent Metric Space: A Ge
 	@article{jawanpuria2018learning,
 	  title={Learning multilingual word embeddings in latent metric space: a geometric approach},
 	  author={Jawanpuria, Pratik and Balgovind, Arjun and Kunchukuttan, Anoop and Mishra, Bamdev},
-	  journal={Accepted in TACL},
-	  year={2018}
+	  journal={Accepted in Transaction of the Association of Computational Linguistics (TACL)},
+	  year={2019}
 	}
