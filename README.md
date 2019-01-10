@@ -47,7 +47,7 @@ The results that have been reported in  _[Learning Multilingual Word Embeddings 
 
 **Coming soon**
 
-We provide GeoMM bilingual and multilingual embeddings corresponding monolingual embeddings in the FastText repository. These are normalized embeddings in the latent space, <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;\phi(w)=||\mathbf{B}^{\frac{1}{2}}w||_2" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;\phi(w)=||\mathbf{B}^{\frac{1}{2}}w||_2" title="\phi(w)=||\mathbf{B}^{\frac{1}{2}}Uw||_2" /></a>. The embeddings are made available under the following license: <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a>. 
+We provide GeoMM bilingual and multilingual embeddings corresponding monolingual embeddings in the FastText repository. These are normalized embeddings in the latent space, <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;\phi(w)=||\mathbf{B}^{\frac{1}{2}}w||_2" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;\phi(w)=||\mathbf{B}^{\frac{1}{2}}w||_2" title="\phi(w)=||\mathbf{B}^{\frac{1}{2}}\mathbf{U}w||_2" /></a>. The embeddings are made available under the following license: <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a>. 
 
 
 
