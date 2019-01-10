@@ -1,3 +1,5 @@
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
+
 # Geometry-aware Multilingual Embedding
 
 
@@ -47,7 +49,7 @@ The results that have been reported in  _[Learning Multilingual Word Embeddings 
 
 **Coming soon**
 
-We provide GeoMM bilingual and multilingual embeddings for monolingual embeddings in the FastText repository.
+We provide GeoMM bilingual and multilingual embeddings corresponding monolingual embeddings in the FastText repository. We provide normalized embeddings in the latent space $$\phi(w)=||\mathbf{B}^{\frac{1}{2}}w||_2$$:
 
 ### Using CommonCrawl FastText Embeddings
 
