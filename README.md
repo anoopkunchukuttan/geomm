@@ -47,7 +47,7 @@ The results that have been reported in  _[Learning Multilingual Word Embeddings 
 
 **Coming soon**
 
-We provide GeoMM bilingual and multilingual embeddings corresponding monolingual embeddings in the FastText repository. We provide normalized embeddings in the latent space, <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;\phi(w)=||\mathbf{B}^{\frac{1}{2}}w||_2" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;\phi(w)=||\mathbf{B}^{\frac{1}{2}}w||_2" title="\phi(w)=||\mathbf{B}^{\frac{1}{2}}w||_2" /></a> 
+We provide GeoMM bilingual and multilingual embeddings corresponding monolingual embeddings in the FastText repository. These are normalized embeddings in the latent space, <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;\phi(w)=||\mathbf{B}^{\frac{1}{2}}w||_2" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;\phi(w)=||\mathbf{B}^{\frac{1}{2}}w||_2" title="\phi(w)=||\mathbf{B}^{\frac{1}{2}}w||_2" /></a>. The embeddings are made available under the following license: <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a>. 
 
 
 
@@ -63,7 +63,7 @@ We provide GeoMM bilingual and multilingual embeddings corresponding monolingual
 
 
 ## Acknowledgements
-The data-processing part of our code was taken from _[Artetxe's Vecmap Repository](https://github.com/artetxem/vecmap)_.
+The data-processing part of our code was taken from _[Mikel Artetxe's Vecmap Repository](https://github.com/artetxem/vecmap)_.
 
 ## References
 Please cite _[Learning Multilingual Word Embeddings in Latent Metric Space: A Geometric Approach](https://arxiv.org/abs/1808.08773)_ if you found the resources in this repository useful.
