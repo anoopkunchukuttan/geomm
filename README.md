@@ -53,8 +53,11 @@ We provide GeoMM bilingual and multilingual embeddings for monolingual embedding
 
 #### English to Indian language bilingual embeddings
 
-### Using Wikipedia FastText Embeddings
-
+|Language Pair|
+| ----------- |
+| [en-hi](https://akpublicdata.blob.core.windows.net/publicdata/geomm/cc/en-hi.tgz) |  
+| [en-bn](https://akpublicdata.blob.core.windows.net/publicdata/geomm/cc/en-bn.tgz) |  
+| [en-ta](https://akpublicdata.blob.core.windows.net/publicdata/geomm/cc/en-ta.tgz) |  
 
 
 ## Acknowledgements
