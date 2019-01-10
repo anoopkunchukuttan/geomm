@@ -1,5 +1,3 @@
-<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-
 # Geometry-aware Multilingual Embedding
 
 
@@ -49,7 +47,10 @@ The results that have been reported in  _[Learning Multilingual Word Embeddings 
 
 **Coming soon**
 
-We provide GeoMM bilingual and multilingual embeddings corresponding monolingual embeddings in the FastText repository. We provide normalized embeddings in the latent space $$\phi(w)=||\mathbf{B}^{\frac{1}{2}}w||_2$$:
+We provide GeoMM bilingual and multilingual embeddings corresponding monolingual embeddings in the FastText repository. We provide normalized embeddings in the latent space, <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;\phi(w)=||\mathbf{B}^{\frac{1}{2}}w||_2" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;\phi(w)=||\mathbf{B}^{\frac{1}{2}}w||_2" title="\phi(w)=||\mathbf{B}^{\frac{1}{2}}w||_2" /></a> 
+
+<img src="https://latex.codecogs.com/svg.latex?\Large&space;x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" title="\Large x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}" />
+
 
 ### Using CommonCrawl FastText Embeddings
 
