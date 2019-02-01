@@ -45,21 +45,27 @@ The results that have been reported in  _[Learning Multilingual Word Embeddings 
 
 ## GeoMM Embeddings 
 
-**Coming soon**
+We provide GeoMM bilingual and multilingual embeddings. These are normalized embeddings in the latent space, <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;\phi(w)=||\mathbf{B}^{\frac{1}{2}}w||_2" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;\phi(w)=||\mathbf{B}^{\frac{1}{2}}w||_2" title="\phi(w)=||\mathbf{B}^{\frac{1}{2}}\mathbf{U}w||_2" /></a>. The embeddings are made available under the following license: <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a>. 
 
-We provide GeoMM bilingual and multilingual embeddings corresponding monolingual embeddings in the FastText repository. These are normalized embeddings in the latent space, <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;\phi(w)=||\mathbf{B}^{\frac{1}{2}}w||_2" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;\phi(w)=||\mathbf{B}^{\frac{1}{2}}w||_2" title="\phi(w)=||\mathbf{B}^{\frac{1}{2}}\mathbf{U}w||_2" /></a>. The embeddings are made available under the following license: <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a>. 
+### MUSE Dataset
 
+|||||||
+|---|---|---|---|---|---|
+| [de](https://akpublicdata.blob.core.windows.net/publicdata/geomm/muse/muse-de.vec.gz) | [en](https://akpublicdata.blob.core.windows.net/publicdata/geomm/muse/muse-en.vec.gz) | [es](https://akpublicdata.blob.core.windows.net/publicdata/geomm/muse/muse-es.vec.gz) | [fr](https://akpublicdata.blob.core.windows.net/publicdata/geomm/muse/muse-fr.vec.gz) | [ru](https://akpublicdata.blob.core.windows.net/publicdata/geomm/muse/muse-ru.vec.gz) | [zh](https://akpublicdata.blob.core.windows.net/publicdata/geomm/muse/muse-zh.vec.gz) |
 
+### VecMap Dataset
 
-### Using CommonCrawl FastText Embeddings
+||||||
+|---|---|---|---|---|
+| [de](https://akpublicdata.blob.core.windows.net/publicdata/geomm/vecmap/vecmap-de.vec.gz) | [en](https://akpublicdata.blob.core.windows.net/publicdata/geomm/vecmap/vecmap-en.vec.gz) | [es](https://akpublicdata.blob.core.windows.net/publicdata/geomm/vecmap/vecmap-es.vec.gz) | [fi](https://akpublicdata.blob.core.windows.net/publicdata/geomm/vecmap/vecmap-fi.vec.gz) | [it](https://akpublicdata.blob.core.windows.net/publicdata/geomm/vecmap/vecmap-it.vec.gz) |
 
-#### English to Indian language bilingual embeddings
+#### English-Indian language bilingual embeddings
 
-|Language Pair|
-| ----------- |
-| [en-hi](https://akpublicdata.blob.core.windows.net/publicdata/geomm/cc/en-hi.tgz) |  
-| [en-bn](https://akpublicdata.blob.core.windows.net/publicdata/geomm/cc/en-bn.tgz) |  
-| [en-ta](https://akpublicdata.blob.core.windows.net/publicdata/geomm/cc/en-ta.tgz) |  
+These bilingual embeddings have been trained using the [CommonCrawl+Wikipedia FastText Embeddings](https://fasttext.cc/docs/en/crawl-vectors.html) and the [MUSE bilingual dictionaries](https://github.com/facebookresearch/MUSE#ground-truth-bilingual-dictionaries).
+
+||||
+|---|---|---|
+| [en-hi](https://akpublicdata.blob.core.windows.net/publicdata/geomm/cc/en-hi.tgz) | [en-bn](https://akpublicdata.blob.core.windows.net/publicdata/geomm/cc/en-bn.tgz) | [en-ta](https://akpublicdata.blob.core.windows.net/publicdata/geomm/cc/en-ta.tgz) |  
 
 
 ## Acknowledgements
