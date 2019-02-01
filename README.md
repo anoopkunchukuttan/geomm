@@ -49,11 +49,15 @@ We provide GeoMM bilingual and multilingual embeddings. These are normalized emb
 
 ### MUSE Dataset
 
+These embeddings have been trained jointly using en-XX [MUSE bilingual dictionaries](https://github.com/facebookresearch/MUSE#ground-truth-bilingual-dictionaries) and [Wikipedia FastText embeddings](https://fasttext.cc/docs/en/pretrained-vectors.html).  
+
 |||||||
 |---|---|---|---|---|---|
 | [de](https://akpublicdata.blob.core.windows.net/publicdata/geomm/muse/muse-de.vec.gz) | [en](https://akpublicdata.blob.core.windows.net/publicdata/geomm/muse/muse-en.vec.gz) | [es](https://akpublicdata.blob.core.windows.net/publicdata/geomm/muse/muse-es.vec.gz) | [fr](https://akpublicdata.blob.core.windows.net/publicdata/geomm/muse/muse-fr.vec.gz) | [ru](https://akpublicdata.blob.core.windows.net/publicdata/geomm/muse/muse-ru.vec.gz) | [zh](https://akpublicdata.blob.core.windows.net/publicdata/geomm/muse/muse-zh.vec.gz) |
 
 ### VecMap Dataset
+
+These embeddings have been trained jointly using en-XX bilingual dictionaries and embeddings from the [VecMap dataset](https://github.com/artetxem/vecmap/blob/master/get_data.sh). 
 
 ||||||
 |---|---|---|---|---|
