@@ -156,13 +156,12 @@ def main():
     
     U1 = TT.matrix()
     U2 = TT.matrix()
-    B = TT.matrix()
+    B  = TT.matrix()
 
     cost = TT.sum(((shared(x[uniq_src]).dot(U1.dot(B.dot(U2.T)))).dot(shared(z[uniq_trg]).T)-A)**2) + 0.5*Lambda*(TT.sum(B**2))
 
     solver = ConjugateGradient(maxtime=args.max_opt_time,maxiter=args.max_opt_iter)
 
-    low_rank=300
     manifold =Product([Stiefel(x.shape[1], x.shape[1]),Stiefel(z.shape[1], x.shape[1]),PositiveDefinite(x.shape[1])])
     problem = Problem(manifold=manifold, cost=cost, arg=[U1,U2,B], verbosity=3)
     wopt = solver.solve(problem)
@@ -240,10 +239,9 @@ def main():
     translation5 = collections.defaultdict(list)
     translation10 = collections.defaultdict(list)
 
+    ### compute nearest neigbours of x in z
     t=time.time()
     nbrhood_x=np.zeros(xw.shape[0])
-    nbrhood_z=np.zeros(zw.shape[0])
-    nbrhood_z2=cp.zeros(zw.shape[0])
 
     for i in range(0, len(src), BATCH_SIZE):
         j = min(i + BATCH_SIZE, len(src))
@@ -251,14 +249,26 @@ def main():
         similarities_x = -1*np.partition(-1*similarities,args.csls_neighbourhood-1 ,axis=1)
         nbrhood_x[src[i:j]]=np.mean(similarities_x[:,:args.csls_neighbourhood],axis=1)
 
+    ### compute nearest neigbours of z in x (GPU version)
+    nbrhood_z=np.zeros(zw.shape[0])
+    nbrhood_z2=cp.zeros(zw.shape[0])
     batch_num=1
     for i in range(0, zw.shape[0], BATCH_SIZE):
         j = min(i + BATCH_SIZE, zw.shape[0])
         similarities = -1*cp.partition(-1*cp.dot(cp.asarray(zw[i:j]),cp.transpose(cp.asarray(xw))),args.csls_neighbourhood-1 ,axis=1)[:,:args.csls_neighbourhood]
         nbrhood_z2[i:j]=(cp.mean(similarities[:,:args.csls_neighbourhood],axis=1))
         batch_num+=1
-
     nbrhood_z=cp.asnumpy(nbrhood_z2)
+
+    #### compute nearest neigbours of z in x (CPU version)
+    #nbrhood_z=np.zeros(zw.shape[0])
+    #for i in range(0, len(zw.shape[0]), BATCH_SIZE):
+    #    j = min(i + BATCH_SIZE, len(zw.shape[0]))
+    #    similarities = zw[i:j].dot(xw.T)
+    #    similarities_z = -1*np.partition(-1*similarities,args.csls_neighbourhood-1 ,axis=1)
+    #    nbrhood_z[i:j]=np.mean(similarities_z[:,:args.csls_neighbourhood],axis=1)
+
+    ### find translation 
     for i in range(0, len(src), BATCH_SIZE):
         j = min(i + BATCH_SIZE, len(src))
         similarities = xw[src[i:j]].dot(zw.T)
