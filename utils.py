@@ -6,6 +6,10 @@ import collections
 import sys
 import time
 import os
+from subprocess import Popen, PIPE, STDOUT
+import shlex
+import numpy as np
+
 
 def read_model(mapping_model_dir):
     """
@@ -188,4 +192,120 @@ def translate(src_emb_fname, tgt_emb_fname, trans_tgt_fname, trans_src_fname=Non
     #            trans_tgt_file.write( u'{} ||| {} ||| {} ||| {}\n'.format( 
     #                            wno, '@@OOV@@', '0.0 0.0 0.0 0.0', 0.0) )
 
+def read_dict(fname,delim=' '):
+    trans_dict={}
+    with open(fname,'r',encoding='utf-8') as infile:
+        for i,line in enumerate(infile,1):
+            r=line.strip().split(delim)
+            if len(r)!=2:
+                print('Ignore entry on line {}: does not have 2 fields'.format(i))
+                continue
+            k,v=r
+            trans_dict[k]=v
 
+    return trans_dict
+
+def compute_fasttext_embeddings(oov_words, model_path, fast_text_binary_path, dtype='float'):
+    """
+    Computes fasttext embeddings for given words. 
+    Uses the `fasttext print-word-vectors` CLI interface for generating embeddings.
+    
+    oov_words: list of words to compute fasttext embeddings
+    model_path: path to fasttext model (.bin file)
+    fast_text_binary_path: path to fasttext binary
+    """
+    p = Popen(shlex.split('{} print-word-vectors {}'.format(fast_text_binary_path, model_path)), 
+              stdout=PIPE, stdin=PIPE, stderr=PIPE,universal_newlines=True)
+    
+    stdout_data, stderr = p.communicate(input='\n'.join(oov_words))
+    
+    if len(stderr) > 0:
+        raise Exception('Error running fasttext')
+        
+    emb_rows=[]
+    words=[]
+        
+    for line in stdout_data.split('\n'):
+        if len(line)>0:
+            word, vec = line.strip().split(' ', 1)
+            words.append(word)
+            emb_rows.append(np.fromstring(vec, sep=' ', dtype=dtype))
+        
+    return (words, np.array(emb_rows, dtype=dtype))
+
+def add_oov_embeddings(train_dict_fname, test_dict_fname, 
+                       src_emb_fname, tgt_emb_fname,
+                       out_src_emb_fname, out_tgt_emb_fname,
+                       src_model_path, tgt_model_path,
+                       fast_text_binary_path,
+                       max_voc=200000,
+                       emb_format='txt'):
+    """
+    Adds the embeddings for OOV words in the training and test dictionaries to the embedding file. 
+    This is done by computing the embeddings using FastText. So, this method applies to FastText 
+    embeddings only. Note that the output embedding file will contain only the OOV words plus 
+    the first max_voc words in the original embedding file.
+    
+    train_dict_fname: 
+    test_dict_fname: 
+    src_emb_fname: embedding file for source language 
+    tgt_emb_fname: embedding file for target language
+    out_src_emb_fname: output embedding file for source language 
+    out_tgt_emb_fname: output embedding file for target language    
+    src_model_path: fasttext model for source language 
+    tgt_model_path: fasttext model for targetqa language 
+    fast_text_binary_path: path to fasttext binary
+    max_voc: number of vocab items to process from the embedding file
+    emb_format: format of embedding files. Currently supported: 'txt' - standard fast text format
+    """
+    
+    ## read dictionaries
+    train_dict = read_dict(train_dict_fname)    
+    test_dict  = read_dict(test_dict_fname)
+    
+    # read embeddings 
+    src_vcb_words=None
+    src_emb=None
+    tgt_vcb_words=None
+    tgt_emb=None
+    
+    with open(src_emb_fname, 'r', encoding='utf-8' ) as src_emb_file, \
+         open(tgt_emb_fname, 'r', encoding='utf-8' ) as tgt_emb_file:        
+        src_vcb_words, src_emb = embeddings.read(src_emb_file, max_voc)
+        tgt_vcb_words, tgt_emb = embeddings.read(tgt_emb_file, max_voc)
+    
+    ## find OOVs
+    src_oov_words=set()
+    src_oov_words.update(train_dict.keys())
+    src_oov_words.update(test_dict.keys())
+    src_oov_words.difference_update(src_vcb_words)
+    print('Number of src OOV words: {}'.format(len(src_oov_words)))
+    
+    tgt_oov_words=set()
+    tgt_oov_words.update(train_dict.values())
+    tgt_oov_words.update(test_dict.values())   
+    tgt_oov_words.difference_update(tgt_vcb_words) 
+    print('Number of tgt OOV words: {}'.format(len(tgt_oov_words)))
+    
+    ## compute embeddings for OOV
+    ##### cat queries.txt | ./fasttext print-word-vectors model.bin
+    src_oov_final_words, src_oov_emb = compute_embeddings(src_oov_words, src_model_path, fast_text_binary_path)
+    tgt_oov_final_words, tgt_oov_emb = compute_embeddings(tgt_oov_words, tgt_model_path, fast_text_binary_path)
+    
+    if(len(src_oov_words)!=len(src_oov_final_words)):
+        print('WARNING: Embeddings not computed for {} words out of {} OOV source words'.format(
+            len(src_oov_words)-len(src_oov_final_words),
+            len(src_oov_words)))
+        
+    if(len(tgt_oov_words)!=len(tgt_oov_final_words)):
+        print('WARNING: Embeddings not computed for {} words out of {} OOV target words'.format(
+            len(tgt_oov_words)-len(tgt_oov_final_words),
+            len(tgt_oov_words)))        
+    
+    ## write new embeddings files to disk
+    ## put the OOV words first followed by words in the original embeddings file 
+    with open(out_src_emb_fname, 'w', encoding='utf-8' ) as out_src_emb_file, \
+         open(out_tgt_emb_fname, 'w', encoding='utf-8' ) as out_tgt_emb_file:       
+        embeddings.write( src_oov_final_words+src_vcb_words, np.concatenate([src_oov_emb, src_emb]), out_src_emb_file )
+        embeddings.write( tgt_oov_final_words+tgt_vcb_words, np.concatenate([tgt_oov_emb, tgt_emb]), out_src_emb_file )   
+    
