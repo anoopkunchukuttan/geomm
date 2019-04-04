@@ -29,7 +29,7 @@ def apply_mapping(x,vocab_type,model_params, latent_space=True):
     """
      Applies bilingual mapping to the matrix x and returns the transformed matrix. 
      
-     vocab_type is one of `src` or `tgt`
+     vocab_type is one of `src` or `tgt`. Indicates the source or target language as per the trained model. 
 
      latent_space: If true, the embeddings are mapped to latent space. Otherwise, 
         they are mapped to the embedding space of the other language. 
@@ -52,7 +52,13 @@ def apply_mapping(x,vocab_type,model_params, latent_space=True):
 
 def map_embedding_db(in_emb_fname, out_emb_fname, vocab_type, mapping_model_dir, latent_space=True): 
     """
-    Maps all the vocabulary in `in_emb_fname` to target language space using the model in `mapping_model_dir`
+     Maps all the vocabulary in `in_emb_fname` to target language space using the model in `mapping_model_dir`
+     The resultant embeddings are stored in `out_emb_fname`
+
+     vocab_type is one of `src` or `tgt`. Indicates the source or target language as per the trained model. 
+
+     latent_space: If true, the embeddings are mapped to latent space. Otherwise, 
+        they are mapped to the embedding space of the other language. 
     """
 
     print('Loading train data...')
