@@ -25,26 +25,34 @@ def read_model(mapping_model_dir):
 
     return model_params
 
-def apply_mapping(x,vocab_type,model_params): 
+def apply_mapping(x,vocab_type,model_params, latent_space=True): 
     """
      Applies bilingual mapping to the matrix x and returns the transformed matrix. 
      
      vocab_type is one of `src` or `tgt`
+
+     latent_space: If true, the embeddings are mapped to latent space. Otherwise, 
+        they are mapped to the embedding space of the other language. 
     """
    
     xw=None 
 
     if vocab_type=='src':
-        xw = x.dot( model_params['U_src'] ).dot(scipy.linalg.sqrtm( model_params['B']  ))
+        if latent_space:
+            xw = x.dot( model_params['U_src'] ).dot(scipy.linalg.sqrtm( model_params['B']  ))
+        else:
+            xw = x.dot( model_params['U_src'] ).dot( model_params['B'] ).dot( model_params['U_tgt'].T )
     elif vocab_type=='tgt':
-        xw = x.dot( model_params['U_tgt'] ).dot(scipy.linalg.sqrtm( model_params['B']  ))
+        if latent_space:
+            xw = x.dot( model_params['U_tgt'] ).dot(scipy.linalg.sqrtm( model_params['B']  ))
+        else:
+            xw = x.dot( model_params['U_tgt'] ).dot( model_params['B'] ).dot( model_params['U_src'].T )
 
     return xw    
 
-def map_embedding_db(in_emb_fname, out_emb_fname, vocab_type, mapping_model_dir): 
+def map_embedding_db(in_emb_fname, out_emb_fname, vocab_type, mapping_model_dir, latent_space=True): 
     """
-    Maps all the vocabulary in `in_emb_fname` to target language space under the `mapping_method` 
-    using the model in `mapping_model_dir`
+    Maps all the vocabulary in `in_emb_fname` to target language space using the model in `mapping_model_dir`
     """
 
     print('Loading train data...')
@@ -54,7 +62,7 @@ def map_embedding_db(in_emb_fname, out_emb_fname, vocab_type, mapping_model_dir)
         src_word2ind = {word: i for i, word in enumerate(src_words)}
 
     model_params=read_model(mapping_model_dir)
-    xw=apply_mapping(x,vocab_type,model_params)
+    xw=apply_mapping(x,vocab_type,model_params,latent_space)
 
     with open(out_emb_fname,'w',encoding='utf-8') as outfile:
         embeddings.write(src_words,xw,outfile)
@@ -289,8 +297,8 @@ def add_oov_embeddings(train_dict_fname, test_dict_fname,
     
     ## compute embeddings for OOV
     ##### cat queries.txt | ./fasttext print-word-vectors model.bin
-    src_oov_final_words, src_oov_emb = compute_embeddings(src_oov_words, src_model_path, fast_text_binary_path)
-    tgt_oov_final_words, tgt_oov_emb = compute_embeddings(tgt_oov_words, tgt_model_path, fast_text_binary_path)
+    src_oov_final_words, src_oov_emb = compute_fasttext_embeddings(src_oov_words, src_model_path, fast_text_binary_path)
+    tgt_oov_final_words, tgt_oov_emb = compute_fasttext_embeddings(tgt_oov_words, tgt_model_path, fast_text_binary_path)
     
     if(len(src_oov_words)!=len(src_oov_final_words)):
         print('WARNING: Embeddings not computed for {} words out of {} OOV source words'.format(
@@ -307,5 +315,5 @@ def add_oov_embeddings(train_dict_fname, test_dict_fname,
     with open(out_src_emb_fname, 'w', encoding='utf-8' ) as out_src_emb_file, \
          open(out_tgt_emb_fname, 'w', encoding='utf-8' ) as out_tgt_emb_file:       
         embeddings.write( src_oov_final_words+src_vcb_words, np.concatenate([src_oov_emb, src_emb]), out_src_emb_file )
-        embeddings.write( tgt_oov_final_words+tgt_vcb_words, np.concatenate([tgt_oov_emb, tgt_emb]), out_src_emb_file )   
+        embeddings.write( tgt_oov_final_words+tgt_vcb_words, np.concatenate([tgt_oov_emb, tgt_emb]), out_tgt_emb_file )   
     
