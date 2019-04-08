@@ -85,6 +85,7 @@ def main():
     trg_word2ind = {word: i for i, word in enumerate(trg_words)}
 
     # Build training dictionary
+    noov=0
     src_indices = []
     trg_indices = []
     f = open(args.dictionary_train, encoding=args.encoding, errors='surrogateescape')
@@ -99,9 +100,12 @@ def main():
             src_indices.append(src_ind)
             trg_indices.append(trg_ind)
         except KeyError:
+            noov+=1
             if args.verbose:
-                print('WARNING: OOV dictionary entry ({0} - {1})'.format(src, trg), file=sys.stderr)
+                print('WARNING: OOV dictionary entry ({0} - {1})'.format(src, trg)) #, file=sys.stderr
     f.close()
+    if args.verbose:
+        print('Number of pairs having at least one OOV: {}'.format(noov))
     src_indices = src_indices
     trg_indices = trg_indices
     if args.verbose:
@@ -251,14 +255,15 @@ def main():
 
     ### compute nearest neigbours of z in x (GPU version)
     nbrhood_z=np.zeros(zw.shape[0])
-    nbrhood_z2=cp.zeros(zw.shape[0])
-    batch_num=1
-    for i in range(0, zw.shape[0], BATCH_SIZE):
-        j = min(i + BATCH_SIZE, zw.shape[0])
-        similarities = -1*cp.partition(-1*cp.dot(cp.asarray(zw[i:j]),cp.transpose(cp.asarray(xw))),args.csls_neighbourhood-1 ,axis=1)[:,:args.csls_neighbourhood]
-        nbrhood_z2[i:j]=(cp.mean(similarities[:,:args.csls_neighbourhood],axis=1))
-        batch_num+=1
-    nbrhood_z=cp.asnumpy(nbrhood_z2)
+    with cp.cuda.Device(1):
+        nbrhood_z2=cp.zeros(zw.shape[0])
+        batch_num=1
+        for i in range(0, zw.shape[0], BATCH_SIZE):
+            j = min(i + BATCH_SIZE, zw.shape[0])
+            similarities = -1*cp.partition(-1*cp.dot(cp.asarray(zw[i:j]),cp.transpose(cp.asarray(xw))),args.csls_neighbourhood-1 ,axis=1)[:,:args.csls_neighbourhood]
+            nbrhood_z2[i:j]=(cp.mean(similarities[:,:args.csls_neighbourhood],axis=1))
+            batch_num+=1
+        nbrhood_z=cp.asnumpy(nbrhood_z2)
 
     #### compute nearest neigbours of z in x (CPU version)
     #nbrhood_z=np.zeros(zw.shape[0])

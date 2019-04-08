@@ -19,6 +19,7 @@ Do the following steps in order:
 		device = cuda
 		floatX = float32
 8. Install cupy based on your CUDA version
+9. Two GPUs are needed
 
 **Note:** *While using this setup with PyManopt, make sure to import cupy before importing theano, as sometimes theano throws an error that it is unable to find the correct CUDA version. However, the use of Cupy before this fixes the issue.*
 
