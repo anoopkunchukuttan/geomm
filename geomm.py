@@ -46,28 +46,28 @@ def main():
     args = parser.parse_args()
     BATCH_SIZE = args.eval_batch_size
     
-    # Logging
-    method_name = os.path.join('logs','geomm')
-    directory = os.path.join(os.path.join(os.getcwd(),method_name), datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    log_file_name, file_extension = os.path.splitext(os.path.basename(args.dictionary_train))
-    log_file_name = log_file_name + '.log'
-    class Logger(object):
-        def __init__(self):
-            self.terminal = sys.stdout
-            self.log = open(os.path.join(directory,log_file_name), "a")
+    ## Logging
+    #method_name = os.path.join('logs','geomm')
+    #directory = os.path.join(os.path.join(os.getcwd(),method_name), datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
+    #if not os.path.exists(directory):
+    #    os.makedirs(directory)
+    #log_file_name, file_extension = os.path.splitext(os.path.basename(args.dictionary_train))
+    #log_file_name = log_file_name + '.log'
+    #class Logger(object):
+    #    def __init__(self):
+    #        self.terminal = sys.stdout
+    #        self.log = open(os.path.join(directory,log_file_name), "a")
 
-        def write(self, message):
-            self.terminal.write(message)
-            self.log.write(message)  
+    #    def write(self, message):
+    #        self.terminal.write(message)
+    #        self.log.write(message)  
 
-        def flush(self):
-            #this flush method is needed for python 3 compatibility.
-            #this handles the flush command by doing nothing.
-            #you might want to specify some extra behavior here.
-            pass    
-    sys.stdout = Logger()
+    #    def flush(self):
+    #        #this flush method is needed for python 3 compatibility.
+    #        #this handles the flush command by doing nothing.
+    #        #you might want to specify some extra behavior here.
+    #        pass    
+    #sys.stdout = Logger()
     if args.verbose:
         print('Current arguments: {0}'.format(args))
 
@@ -105,7 +105,7 @@ def main():
                 print('WARNING: OOV dictionary entry ({0} - {1})'.format(src, trg)) #, file=sys.stderr
     f.close()
     if args.verbose:
-        print('Number of pairs having at least one OOV: {}'.format(noov))
+        print('Number of training pairs having at least one OOV: {}'.format(noov))
     src_indices = src_indices
     trg_indices = trg_indices
     if args.verbose:
@@ -273,7 +273,46 @@ def main():
     #    similarities_z = -1*np.partition(-1*similarities,args.csls_neighbourhood-1 ,axis=1)
     #    nbrhood_z[i:j]=np.mean(similarities_z[:,:args.csls_neighbourhood],axis=1)
 
-    ### find translation 
+    #### find translation 
+    #for i in range(0, len(src), BATCH_SIZE):
+    #    j = min(i + BATCH_SIZE, len(src))
+    #    similarities = xw[src[i:j]].dot(zw.T)
+    #    similarities = np.transpose(np.transpose(2*similarities) - nbrhood_x[src[i:j]]) - nbrhood_z
+    #    nn = similarities.argmax(axis=1).tolist()
+    #    similarities = np.argsort((similarities),axis=1)
+
+    #    nn5 = (similarities[:,-5:])
+    #    nn10 = (similarities[:,-10:])
+    #    for k in range(j-i):
+    #        translation[src[i+k]] = nn[k]
+    #        translation5[src[i+k]] = nn5[k]
+    #        translation10[src[i+k]] = nn10[k]
+
+            
+    #if args.geomm_embeddings_path is not None:
+    #    delim=','
+    #    os.makedirs(args.geomm_embeddings_path,exist_ok=True)
+
+    #    translations_fname=os.path.join(args.geomm_embeddings_path,'translations.csv')
+    #    with open(translations_fname,'w',encoding=args.encoding) as translations_file:
+    #        for src_id in src: 
+    #            src_word = src_words[src_id]
+    #            all_trg_words = [ trg_words[trg_id] for trg_id in src2trg[src_id] ]
+    #            trgout_words = [ trg_words[j] for j in translation10[src_id] ]
+    #            ss = list(nn10[src_id,:])
+    #           
+    #            p1 = ':'.join(all_trg_words)
+    #            p2 = delim.join( [ '{}{}{}'.format(w,delim,s) for w,s in zip(trgout_words,ss) ] )
+    #            translations_file.write( '{s}{delim}{p1}{delim}{p2}\n'.format(s=src_word, delim=delim, p1=p1, p2=p2) )
+
+    ### find translation  (and write to file if output requested)
+    delim=','
+    translations_file =None
+    if args.geomm_embeddings_path is not None:
+        os.makedirs(args.geomm_embeddings_path,exist_ok=True)
+        translations_fname=os.path.join(args.geomm_embeddings_path,'translations.csv')
+        translations_file = open(translations_fname,'w',encoding=args.encoding)
+
     for i in range(0, len(src), BATCH_SIZE):
         j = min(i + BATCH_SIZE, len(src))
         similarities = xw[src[i:j]].dot(zw.T)
@@ -287,6 +326,23 @@ def main():
             translation[src[i+k]] = nn[k]
             translation5[src[i+k]] = nn5[k]
             translation10[src[i+k]] = nn10[k]
+
+
+            if args.geomm_embeddings_path is not None:
+                src_id=src[i+k]
+                src_word = src_words[src_id]
+                all_trg_words = [ trg_words[trg_id] for trg_id in src2trg[src_id] ]
+                trgout_words = [ trg_words[j] for j in translation10[src_id] ]
+                #ss = list(nn10[src_id,:])
+
+                p1 = ':'.join(all_trg_words)
+                p2 = ':'.join(trgout_words)
+                #p2 = delim.join( [ '{}{}{}'.format(w,delim,s) for w,s in zip(trgout_words,ss) ] )
+                translations_file.write( '{s}{delim}{p1}{delim}{p2}\n'.format(s=src_word, p1=p1, p2=p2, delim=delim) )
+
+    if args.geomm_embeddings_path is not None:
+        translations_file.close()
+
     accuracy = np.mean([1 if translation[i] in src2trg[i] else 0 for i in src])
     mean=0
     for i in src:
