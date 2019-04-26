@@ -21,7 +21,7 @@ Do the following steps in order:
 8. Install cupy based on your CUDA version
 9. Two GPUs are needed
 
-**Note:** *While using this setup with PyManopt, make sure to import cupy before importing theano, as sometimes theano throws an error that it is unable to find the correct CUDA version. However, the use of Cupy before this fixes the issue.*
+**Note:** *While using this setup with Pymanopt, make sure to import cupy before importing theano, as sometimes theano throws an error that it is unable to find the correct CUDA version. However, the use of Cupy before this fixes the issue.*
 
 ## Datasets
 The datasets can be downloaded by running the following commands in vecmap_data/ and muse_data/
@@ -82,6 +82,8 @@ Please cite _[Learning Multilingual Word Embeddings in Latent Metric Space: A Ge
 	@article{jawanpuria2018learning,
 	  title={Learning multilingual word embeddings in latent metric space: a geometric approach},
 	  author={Jawanpuria, Pratik and Balgovind, Arjun and Kunchukuttan, Anoop and Mishra, Bamdev},
-	  journal={Accepted in Transaction of the Association for Computational Linguistics (TACL)},
+	  journal={Transaction of the Association for Computational Linguistics (TACL)},
+	  volume={7},
+	  pages={107--120},
 	  year={2019}
 	}
