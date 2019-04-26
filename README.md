@@ -3,7 +3,7 @@
 
 Code for learning multilingual embeddings using the method reported in: 
 
-Pratik Jawanpuria, Arjun Balgovind, Anoop Kunchukuttan, Bamdev Mishra. _[Learning Multilingual Word Embeddings in Latent Metric Space: A Geometric Approach](https://arxiv.org/abs/1808.08773)_. Accepted in Transaction of the Association for Computational Linguistics (TACL), 2019.
+Pratik Jawanpuria, Arjun Balgovind, Anoop Kunchukuttan, Bamdev Mishra. _[Learning Multilingual Word Embeddings in Latent Metric Space: A Geometric Approach](https://www.mitpressjournals.org/doi/full/10.1162/tacl_a_00257)_. Transaction of the Association for Computational Linguistics (TACL), Volume 7, p.107-120, 2019.
 
 ## Environment Setup
 Do the following steps in order:
@@ -31,7 +31,7 @@ The datasets can be downloaded by running the following commands in vecmap_data/
 
 ## Reproducing Results
 
-The results that have been reported in  _[Learning Multilingual Word Embeddings in Latent Metric Space: A Geometric Approach](https://arxiv.org/abs/1808.08773)_ can be reproduced by running the following scripts:
+The results that have been reported in  _[Learning Multilingual Word Embeddings in Latent Metric Space: A Geometric Approach](https://www.mitpressjournals.org/doi/full/10.1162/tacl_a_00257)_ can be reproduced by running the following scripts:
 * Results of the GeoMM algorithm reported in Table 1, 2, and 6:
 	
 		./geomm_results.sh
@@ -77,7 +77,7 @@ These bilingual embeddings have been trained using the [CommonCrawl+Wikipedia Fa
 The data-processing part of our code was taken from _[Mikel Artetxe's Vecmap Repository](https://github.com/artetxem/vecmap)_.
 
 ## References
-Please cite _[Learning Multilingual Word Embeddings in Latent Metric Space: A Geometric Approach](https://arxiv.org/abs/1808.08773)_ if you found the resources in this repository useful.
+Please cite _[Learning Multilingual Word Embeddings in Latent Metric Space: A Geometric Approach](https://www.mitpressjournals.org/doi/full/10.1162/tacl_a_00257)_ if you found the resources in this repository useful.
 
 	@article{jawanpuria2018learning,
 	  title={Learning multilingual word embeddings in latent metric space: a geometric approach},
