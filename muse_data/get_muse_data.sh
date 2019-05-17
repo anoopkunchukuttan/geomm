@@ -3,16 +3,16 @@
 #
 
 mkdir -p vectors
-curl -Lo vectors/wiki.en.vec https://s3-us-west-1.amazonaws.com/fasttext-vectors/wiki.en.vec
-curl -Lo vectors/wiki.es.vec https://s3-us-west-1.amazonaws.com/fasttext-vectors/wiki.es.vec
-curl -Lo vectors/wiki.fr.vec https://s3-us-west-1.amazonaws.com/fasttext-vectors/wiki.fr.vec
-curl -Lo vectors/wiki.de.vec https://s3-us-west-1.amazonaws.com/fasttext-vectors/wiki.de.vec
-curl -Lo vectors/wiki.ru.vec https://s3-us-west-1.amazonaws.com/fasttext-vectors/wiki.ru.vec
-curl -Lo vectors/wiki.zh.vec https://s3-us-west-1.amazonaws.com/fasttext-vectors/wiki.zh.vec
-curl -Lo vectors/wiki.it.vec https://s3-us-west-1.amazonaws.com/fasttext-vectors/wiki.it.vec
-curl -Lo vectors/wiki.pt.vec https://s3-us-west-1.amazonaws.com/fasttext-vectors/wiki.pt.vec
+curl -Lo vectors/wiki.en.vec https://dl.fbaipublicfiles.com/fasttext/vectors-wiki/wiki.en.vec
+curl -Lo vectors/wiki.es.vec https://dl.fbaipublicfiles.com/fasttext/vectors-wiki/wiki.es.vec
+curl -Lo vectors/wiki.fr.vec https://dl.fbaipublicfiles.com/fasttext/vectors-wiki/wiki.fr.vec
+curl -Lo vectors/wiki.de.vec https://dl.fbaipublicfiles.com/fasttext/vectors-wiki/wiki.de.vec
+curl -Lo vectors/wiki.ru.vec https://dl.fbaipublicfiles.com/fasttext/vectors-wiki/wiki.ru.vec
+curl -Lo vectors/wiki.zh.vec https://dl.fbaipublicfiles.com/fasttext/vectors-wiki/wiki.zh.vec
+curl -Lo vectors/wiki.it.vec https://dl.fbaipublicfiles.com/fasttext/vectors-wiki/wiki.it.vec
+curl -Lo vectors/wiki.pt.vec https://dl.fbaipublicfiles.com/fasttext/vectors-wiki/wiki.pt.vec
 
-aws_path='https://s3.amazonaws.com/arrival'
+aws_path='https://dl.fbaipublicfiles.com/arrival'
 semeval_2017='http://alt.qcri.org/semeval2017/task2/data/uploads'
 
 declare -A wordsim_lg

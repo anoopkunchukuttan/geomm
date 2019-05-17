@@ -23,6 +23,9 @@ def main():
     parser = argparse.ArgumentParser(description='Map the source embeddings into the target embedding space')
     parser.add_argument('emb_file', help='the input target embeddings')
     parser.add_argument('--encoding', default='utf-8', help='the character encoding for input/output (defaults to utf-8)')
+    parser.add_argument('--model_path', default=None, type=str, help='directory to save the model')
+    parser.add_argument('--geomm_embeddings_path', default=None, type=str, help='directory to save the output GeoMM Multi latent space embeddings. The output embeddings are normalized.')
+
     parser.add_argument('--max_vocab', default=0,type=int, help='Maximum vocabulary to be loaded, 0 allows complete vocabulary')
     parser.add_argument('--verbose', default=0,type=int, help='Verbose')
   
@@ -192,9 +195,13 @@ def main():
     problem = Problem(manifold=manifold, cost=cost, arg=variables, verbosity=3)
     wopt = solver.solve(problem)
     w= wopt
-    U1 = w[0]
-    U2 = w[1]
-    B = w[2]
+    ### Save the models if requested
+    if args.model_path is not None: 
+        os.makedirs(args.model_path,exist_ok=True)
+        for i in range(len(emb)):
+            np.savetxt('{0}/U_lang{1}.csv'.format(args.model_path,i+1),wopt[i])
+        np.savetxt('{}/B.csv'.format(args.model_path),wopt[-1])
+
 
     # Step 2: Transformation
     Bhalf = scipy.linalg.sqrtm(wopt[-1])
@@ -207,6 +214,13 @@ def main():
         print('Completed training in {0:.2f} seconds'.format(end_time-start_time))
     gc.collect()
 
+    ### Save the GeoMM embeddings if requested
+    if args.geomm_embeddings_path is not None: 
+        os.makedirs(args.geomm_embeddings_path,exist_ok=True)
+        for i in range(len(test_emb)):
+            out_emb_fname=os.path.join(args.geomm_embeddings_path,'emb_lang{0}.vec'.format(i+1))
+            with open(out_emb_fname,'w',encoding=args.encoding) as outfile:
+                embeddings.write(words[i],embeddings.length_normalize(test_emb[i]),outfile)
 
     # Step 3: Evaluation
     if args.verbose:
