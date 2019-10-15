@@ -42,15 +42,41 @@ def read(file, max_voc, threshold=0, vocabulary=None, dtype='float'):
             if wc==max_voc:
                 break
             word, vec = file.readline().split(' ', 1)
+            
+            if word.lower() in wordset:
+                continue
+            words.append(word.lower())
+            wordset.add(word.lower())
+            
             if vocabulary is None:
-                if word.lower() in wordset:
-                    continue
-                words.append(word.lower())
-                wordset.add(word.lower())
                 matrix[wc] = np.fromstring(vec, sep=' ', dtype=dtype)
+            elif word in vocabulary:
+                matrix.append(np.fromstring(vec, sep=' ', dtype=dtype))
+                
             wc+=1
+            
     return (words, matrix) if vocabulary is None else (words, np.array(matrix, dtype=dtype))
 
+def read_vocab(file, max_voc):
+    header = file.readline().split(' ')
+    count = int(header[0])
+    dim = int(header[1])
+    words = []
+    if count<max_voc:
+        max_voc=0
+    if max_voc==0:
+        for i in range(count):
+            word, vec = file.readline().split(' ', 1)
+            words.append(word)
+    else:
+        wc=0
+        for i in range(count):
+            if wc==max_voc:
+                break
+            word, vec = file.readline().split(' ', 1)
+            words.append(word)
+            wc+=1
+    return words
 
 def write(words, matrix, file):
     m = np.array(matrix)
