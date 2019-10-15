@@ -167,6 +167,7 @@ def main():
     solver = ConjugateGradient(maxtime=args.max_opt_time,maxiter=args.max_opt_iter)
 
     manifold =Product([Stiefel(x.shape[1], x.shape[1]),Stiefel(z.shape[1], x.shape[1]),PositiveDefinite(x.shape[1])])
+    #manifold =Product([Stiefel(x.shape[1], 200),Stiefel(z.shape[1], 200),PositiveDefinite(200)])
     problem = Problem(manifold=manifold, cost=cost, arg=[U1,U2,B], verbosity=3)
     wopt = solver.solve(problem)
 

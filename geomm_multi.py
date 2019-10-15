@@ -15,13 +15,14 @@ from theano import shared
 import datetime
 from pymanopt import Problem
 from pymanopt.manifolds import Stiefel, Product, PositiveDefinite
-from pymanopt.solvers import ConjugateGradient, TrustRegions, ConjugateGradientMS
+from pymanopt.solvers import ConjugateGradient, TrustRegions #, ConjugateGradientMS
 import gc
 
 def main():
     # Parse command line arguments
     parser = argparse.ArgumentParser(description='Map the source embeddings into the target embedding space')
     parser.add_argument('emb_file', help='the input target embeddings')
+    parser.add_argument('--lang_list', default='', help='the list of languages listed in the same order as in the input embedding `emb_file` (comma-separated). e.g. "en,es,fr"')
     parser.add_argument('--encoding', default='utf-8', help='the character encoding for input/output (defaults to utf-8)')
     parser.add_argument('--model_path', default=None, type=str, help='directory to save the model')
     parser.add_argument('--geomm_embeddings_path', default=None, type=str, help='directory to save the output GeoMM Multi latent space embeddings. The output embeddings are normalized.')
@@ -45,30 +46,32 @@ def main():
     eval_group.add_argument('--csls_neighbourhood', type=int,default=10, help='Neighbourhood size for CSLS')
 
     args = parser.parse_args()
+
     BATCH_SIZE = args.eval_batch_size
+    lang_list=None
 
-    # Logging
-    method_name = os.path.join('logs','geomm_multi')
-    directory = os.path.join(os.path.join(os.getcwd(),method_name), datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    log_file_name, file_extension = os.path.splitext(os.path.basename(args.dictionary_train_file))
-    log_file_name = log_file_name + '.log'
-    class Logger(object):
-        def __init__(self):
-            self.terminal = sys.stdout
-            self.log = open(os.path.join(directory,log_file_name), "a")
+    ## Logging
+    #method_name = os.path.join('logs','geomm_multi')
+    #directory = os.path.join(os.path.join(os.getcwd(),method_name), datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
+    #if not os.path.exists(directory):
+    #    os.makedirs(directory)
+    #log_file_name, file_extension = os.path.splitext(os.path.basename(args.dictionary_train_file))
+    #log_file_name = log_file_name + '.log'
+    #class Logger(object):
+    #    def __init__(self):
+    #        self.terminal = sys.stdout
+    #        self.log = open(os.path.join(directory,log_file_name), "a")
 
-        def write(self, message):
-            self.terminal.write(message)
-            self.log.write(message)  
+    #    def write(self, message):
+    #        self.terminal.write(message)
+    #        self.log.write(message)  
 
-        def flush(self):
-            #this flush method is needed for python 3 compatibility.
-            #this handles the flush command by doing nothing.
-            #you might want to specify some extra behavior here.
-            pass    
-    sys.stdout = Logger()
+    #    def flush(self):
+    #        #this flush method is needed for python 3 compatibility.
+    #        #this handles the flush command by doing nothing.
+    #        #you might want to specify some extra behavior here.
+    #        pass    
+    #sys.stdout = Logger()
     if args.verbose:
         print('Current arguments: {0}'.format(args))
 
@@ -85,11 +88,19 @@ def main():
             words.append(words_temp)
             emb.append(x_temp)
 
-
     # Build word to index map
     word2ind = []
     for lang in words:
         word2ind.append({word: i for i, word in enumerate(lang)})
+
+    ##### Set language names
+
+    ## language id map
+    if args.lang_list=='':
+        lang_list = [ str(i) for i in range(len(emb)) ]
+    else:
+        lang_list = args.lang_list.split(',')
+
 
     # Build training dictionary
     train_pairs = []
@@ -198,9 +209,15 @@ def main():
     ### Save the models if requested
     if args.model_path is not None: 
         os.makedirs(args.model_path,exist_ok=True)
+
         for i in range(len(emb)):
-            np.savetxt('{0}/U_lang{1}.csv'.format(args.model_path,i+1),wopt[i])
+            np.savetxt('{0}/U_{1}.csv'.format(args.model_path,lang_list[i]),wopt[i])
+
         np.savetxt('{}/B.csv'.format(args.model_path),wopt[-1])
+
+        #with open('{}/lang_id_map.txt'.format(args.model_path),'w',encoding='utf-8') as idmapfile:
+        #    for lang in lang_list:
+        #        idmapfile.write(lang+'\n')
 
 
     # Step 2: Transformation
@@ -218,7 +235,7 @@ def main():
     if args.geomm_embeddings_path is not None: 
         os.makedirs(args.geomm_embeddings_path,exist_ok=True)
         for i in range(len(test_emb)):
-            out_emb_fname=os.path.join(args.geomm_embeddings_path,'emb_lang{0}.vec'.format(i+1))
+            out_emb_fname=os.path.join(args.geomm_embeddings_path,'emb_{0}.vec'.format(lang_list[i]))
             with open(out_emb_fname,'w',encoding=args.encoding) as outfile:
                 embeddings.write(words[i],embeddings.length_normalize(test_emb[i]),outfile)
 
@@ -277,13 +294,16 @@ def main():
                     similarities = xw[src[i:j]].dot(zw.T)
                     similarities_x = -1*np.partition(-1*similarities,args.csls_neighbourhood-1 ,axis=1)
                     nbrhood_x[src[i:j]]=np.mean(similarities_x[:,:args.csls_neighbourhood],axis=1)
+
                 batch_num=1
-                for i in range(0, zw.shape[0], BATCH_SIZE):
-                    j = min(i + BATCH_SIZE, zw.shape[0])
-                    similarities = -1*cp.partition(-1*cp.dot(cp.asarray(zw[i:j]),cp.transpose(cp.asarray(xw))),args.csls_neighbourhood-1 ,axis=1)[:,:args.csls_neighbourhood]
-                    nbrhood_z2[i:j]=(cp.mean(similarities[:,:args.csls_neighbourhood],axis=1))
-                    batch_num+=1
-                nbrhood_z=cp.asnumpy(nbrhood_z2)
+                with cp.cuda.Device(1):
+                    for i in range(0, zw.shape[0], BATCH_SIZE):
+                        j = min(i + BATCH_SIZE, zw.shape[0])
+                        similarities = -1*cp.partition(-1*cp.dot(cp.asarray(zw[i:j]),cp.transpose(cp.asarray(xw))),args.csls_neighbourhood-1 ,axis=1)[:,:args.csls_neighbourhood]
+                        nbrhood_z2[i:j]=(cp.mean(similarities[:,:args.csls_neighbourhood],axis=1))
+                        batch_num+=1
+                    nbrhood_z=cp.asnumpy(nbrhood_z2)
+
                 for i in range(0, len(src), BATCH_SIZE):
                     j = min(i + BATCH_SIZE, len(src))
                     similarities = xw[src[i:j]].dot(zw.T)
