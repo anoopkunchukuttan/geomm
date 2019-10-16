@@ -7,7 +7,7 @@ import numpy as np
 import cupy as cp
 import scipy.linalg
 import sys
-import ipdb 
+import ipdb
 import time
 import os
 import theano.tensor as TT
@@ -32,12 +32,12 @@ def main():
     mapping_group.add_argument('-dtrain', '--dictionary_train', default=sys.stdin.fileno(), help='the training dictionary file (defaults to stdin)')
     mapping_group.add_argument('-dtest', '--dictionary_test', default=sys.stdin.fileno(), help='the test dictionary file (defaults to stdin)')
     mapping_group.add_argument('--normalize', choices=['unit', 'center', 'unitdim', 'centeremb'], nargs='*', default=[], help='the normalization actions to perform in order')
-    
+
     geomm_group = parser.add_argument_group('GeoMM arguments', 'Arguments for GeoMM method')
     geomm_group.add_argument('--l2_reg', type=float,default=1e2, help='Lambda for L2 Regularization')
     geomm_group.add_argument('--max_opt_time', type=int,default=5000, help='Maximum time limit for optimization in seconds')
     geomm_group.add_argument('--max_opt_iter', type=int,default=150, help='Maximum number of iterations for optimization')
-   
+
     eval_group = parser.add_argument_group('evaluation arguments', 'Arguments for evaluation')
     eval_group.add_argument('--normalize_eval', action='store_true', help='Normalize the embeddings at test time')
     eval_group.add_argument('--eval_batch_size', type=int,default=1000, help='Batch size for evaluation')
@@ -45,7 +45,7 @@ def main():
 
     args = parser.parse_args()
     BATCH_SIZE = args.eval_batch_size
-    
+
     ## Logging
     #method_name = os.path.join('logs','geomm')
     #directory = os.path.join(os.path.join(os.getcwd(),method_name), datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
@@ -60,13 +60,13 @@ def main():
 
     #    def write(self, message):
     #        self.terminal.write(message)
-    #        self.log.write(message)  
+    #        self.log.write(message)
 
     #    def flush(self):
     #        #this flush method is needed for python 3 compatibility.
     #        #this handles the flush command by doing nothing.
     #        #you might want to specify some extra behavior here.
-    #        pass    
+    #        pass
     #sys.stdout = Logger()
     if args.verbose:
         print('Current arguments: {0}'.format(args))
@@ -133,7 +133,7 @@ def main():
     x_count = len(set(src_indices))
     z_count = len(set(trg_indices))
     A = np.zeros((x_count,z_count))
-    
+
     # Creating dictionary matrix from training set
     map_dict_src={}
     map_dict_trg={}
@@ -157,12 +157,29 @@ def main():
 
     np.random.seed(0)
     Lambda=args.l2_reg
-    
+
     U1 = TT.matrix()
     U2 = TT.matrix()
     B  = TT.matrix()
 
-    cost = TT.sum(((shared(x[uniq_src]).dot(U1.dot(B.dot(U2.T)))).dot(shared(z[uniq_trg]).T)-A)**2) + 0.5*Lambda*(TT.sum(B**2))
+    Kx, Kz = x[uniq_src], z[uniq_trg]
+    XtAZ = Kx.T.dot(A.dot(Kz))
+    XtX = Kx.T.dot(Kx)
+    ZtZ = Kz.T.dot(Kz)
+    # AA = np.sum(A*A) # this can be added if cost needs to be compared to original geomm
+
+    W = (U1.dot(B)).dot(U2.T)
+    regularizer = 0.5*Lambda*(TT.sum(B**2))
+    sXtX = shared(XtX)
+    sZtZ = shared(ZtZ)
+    sXtAZ = shared(XtAZ)
+
+    cost = regularizer
+    wtxtxw = W.T.dot(sXtX.dot(W))
+    wtxtxwztz = wtxtxw.dot(sZtZ)
+    cost += TT.nlinalg.trace(wtxtxwztz)
+    cost += -2 * TT.sum(W * sXtAZ)
+    # cost += shared(AA) # this can be added if cost needs to be compared with original geomm
 
     solver = ConjugateGradient(maxtime=args.max_opt_time,maxiter=args.max_opt_iter)
 
@@ -177,7 +194,7 @@ def main():
     B = w[2]
 
     ### Save the models if requested
-    if args.model_path is not None: 
+    if args.model_path is not None:
         os.makedirs(args.model_path,exist_ok=True)
         np.savetxt('{}/U_src.csv'.format(args.model_path),U1)
         np.savetxt('{}/U_tgt.csv'.format(args.model_path),U2)
@@ -195,7 +212,7 @@ def main():
     ### Save the GeoMM embeddings if requested
     xw_n = embeddings.length_normalize(xw)
     zw_n = embeddings.length_normalize(zw)
-    if args.geomm_embeddings_path is not None: 
+    if args.geomm_embeddings_path is not None:
         os.makedirs(args.geomm_embeddings_path,exist_ok=True)
 
         out_emb_fname=os.path.join(args.geomm_embeddings_path,'src.vec')
@@ -274,7 +291,7 @@ def main():
     #    similarities_z = -1*np.partition(-1*similarities,args.csls_neighbourhood-1 ,axis=1)
     #    nbrhood_z[i:j]=np.mean(similarities_z[:,:args.csls_neighbourhood],axis=1)
 
-    #### find translation 
+    #### find translation
     #for i in range(0, len(src), BATCH_SIZE):
     #    j = min(i + BATCH_SIZE, len(src))
     #    similarities = xw[src[i:j]].dot(zw.T)
@@ -289,19 +306,19 @@ def main():
     #        translation5[src[i+k]] = nn5[k]
     #        translation10[src[i+k]] = nn10[k]
 
-            
+
     #if args.geomm_embeddings_path is not None:
     #    delim=','
     #    os.makedirs(args.geomm_embeddings_path,exist_ok=True)
 
     #    translations_fname=os.path.join(args.geomm_embeddings_path,'translations.csv')
     #    with open(translations_fname,'w',encoding=args.encoding) as translations_file:
-    #        for src_id in src: 
+    #        for src_id in src:
     #            src_word = src_words[src_id]
     #            all_trg_words = [ trg_words[trg_id] for trg_id in src2trg[src_id] ]
     #            trgout_words = [ trg_words[j] for j in translation10[src_id] ]
     #            ss = list(nn10[src_id,:])
-    #           
+    #
     #            p1 = ':'.join(all_trg_words)
     #            p2 = delim.join( [ '{}{}{}'.format(w,delim,s) for w,s in zip(trgout_words,ss) ] )
     #            translations_file.write( '{s}{delim}{p1}{delim}{p2}\n'.format(s=src_word, delim=delim, p1=p1, p2=p2) )

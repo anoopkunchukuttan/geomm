@@ -44,6 +44,8 @@ The results that have been reported in  _[Learning Multilingual Word Embeddings 
 
 **Note:** Since our code makes use of CUDA and FP32 precision, it may not be possible to reproduce our results exactly, due to minor numerical variations in GPU operations. However, the effect on the final results is negligible, as we have observed the variations usually lie within an error margin of 0.1 or 0.2.
 
+**Note:** Added geomm_optimized.py which can replace geomm.py in all use-cases. Reduces time-taken for en-es pair from 188.5 second to 6.5 second.
+
 ## GeoMM Embeddings 
 
 We provide GeoMM bilingual and multilingual embeddings. These are normalized embeddings in the latent space, <a href="https://www.codecogs.com/eqnedit.php?latex=\inline&space;\phi(w)=||\mathbf{B}^{\frac{1}{2}}w||_2" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\inline&space;\phi(w)=||\mathbf{B}^{\frac{1}{2}}w||_2" title="\phi(w)=||\mathbf{B}^{\frac{1}{2}}\mathbf{U}w||_2" /></a>. The embeddings are made available under the following license: <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a>. 
