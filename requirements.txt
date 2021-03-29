@@ -123,7 +123,7 @@ pycparser==2.18
 pycrypto==2.6.1
 pycurl==7.43.0.1
 pyflakes==1.6.0
-Pygments==2.2.0
+Pygments==2.7.4
 pygpu==0.7.6
 pylint==1.8.4
 pymanopt==0.2.3
